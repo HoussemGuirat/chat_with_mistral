@@ -78,7 +78,7 @@ def initialize_text_generation_pipeline(model, tokenizer):
 
 def initialize_faiss_index(data):
     try:
-        retriever = SentenceTransformer('C:/Users/houme/OneDrive/Desktop/project/sentence-trans')
+        retriever = SentenceTransformer('all-MiniLM-L6-v2')
         document_embeddings = retriever.encode(data, convert_to_tensor=True)
         dimension = document_embeddings.shape[1]
         index = faiss.IndexFlatIP(dimension)
@@ -100,7 +100,7 @@ def query_index(index, retriever, query, data, top_k=7):
 
 # Add the re-ranking function
 def re_rank_documents(retrieved_docs, query, re_rank_top_k=3):
-    re_ranker = CrossEncoder('C:/Users/houme/OneDrive/Desktop/project/chat/ms-marco-MiniLM-L-6-v2')  
+    re_ranker = CrossEncoder('ms-marco-MiniLM-L-6-v2')  
     query_doc_pairs = [(query, doc) for doc in retrieved_docs]
     re_rank_scores = re_ranker.predict(query_doc_pairs)
     ranked_docs = [doc for _, doc in sorted(zip(re_rank_scores, retrieved_docs), reverse=True)]
@@ -177,7 +177,7 @@ def main(file_path, model_name, question):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Run chatbot with RAG.")
     parser.add_argument("--data_path", type=str, required=False, help="Path to the log file.")
-    parser.add_argument("--model_name", type=str, default='C:/Users/houme/OneDrive/Desktop/project/mistral-7B-instruct-v0.3', help="Model name.")
+    parser.add_argument("--model_name", type=str, default='mistral-7B-instruct-v0.3', help="Model name.")
     parser.add_argument("--question", type=str, required=False, help="Question to ask the model.")
     parser.add_argument("--info", action="store_true", help="Display information about the script and exit.")
     args = parser.parse_args()
