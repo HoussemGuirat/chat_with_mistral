@@ -1,4 +1,4 @@
-```
+
 # Enova Robotic Chat System
 
 This repository contains a test folder for the **Enova Robotic Chat System** with the **Mistral 7B-instruct** model integrated. Additionally, a **Retrieval-Augmented Generation (RAG)** system has been added on top to enhance its capabilities.
@@ -20,7 +20,7 @@ C:\Python312\python.exe -m venv chat
 #### For macOS/Linux Users:
 To create a virtual environment on macOS or Linux, use the following command:
 
-```bash
+```
 python3.12.4 -m venv chat
 ```
 
@@ -31,12 +31,12 @@ This will create a `chat` folder containing the virtual environment.
 After creating the virtual environment, you need to activate it:
 
 #### For Windows:
-```bash
+```
 chat\Scripts\activate
 ```
 
 #### For macOS/Linux:
-```bash
+```
 source chat/bin/activate
 ```
 
