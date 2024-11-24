@@ -1,19 +1,17 @@
-import argparse
 import re
+import time
+import torch
+import warnings
+import numpy as np
 from sentence_transformers import SentenceTransformer, CrossEncoder
 import faiss
-import torch
-import transformers
-import numpy as np
 from transformers import AutoTokenizer, AutoModelForCausalLM, BitsAndBytesConfig
 from logparser import LogParser
 from langchain_community.llms.huggingface_pipeline import HuggingFacePipeline
 from langchain.prompts import PromptTemplate
 from langchain.chains import LLMChain
 from langchain.schema.runnable import RunnablePassthrough
-import warnings
-import time
-
+import transformers
 
 warnings.filterwarnings("ignore")
 
@@ -98,9 +96,8 @@ def query_index(index, retriever, query, data, top_k=7):
         print(f"Error querying index: {e}")
         return []
 
-# Add the re-ranking function
 def re_rank_documents(retrieved_docs, query, re_rank_top_k=3):
-    re_ranker = CrossEncoder('ms-marco-MiniLM-L-6-v2')  
+    re_ranker = CrossEncoder('ms-marco-MiniLM-L-6-v2')
     query_doc_pairs = [(query, doc) for doc in retrieved_docs]
     re_rank_scores = re_ranker.predict(query_doc_pairs)
     ranked_docs = [doc for _, doc in sorted(zip(re_rank_scores, retrieved_docs), reverse=True)]
@@ -137,31 +134,37 @@ def run_rag_chain(retrieved_documents, question, mistral_llm):
         print(f"Error running RAG chain: {e}")
         return None
 
-def main(file_path, model_name, question):
+def initialize_rag_system(file_path, model_name, question):
     start_time = time.time()
+    
+    # Load data
     data = load_data(file_path)
     if data is None:
         return
     
+    # Initialize model and tokenizer
     model_config, tokenizer = initialize_model_and_tokenizer(model_name)
     if model_config is None or tokenizer is None:
         return
     
+    # Create configuration and load model
     bnb_config = create_bnb_config()
     model = load_model(model_name, bnb_config)
     if model is None:
         return
     
+    # Initialize text generation pipeline
     mistral_llm = initialize_text_generation_pipeline(model, tokenizer)
     if mistral_llm is None:
         return
     
+    # Initialize FAISS index
     retriever, index = initialize_faiss_index(data)
     if retriever is None or index is None:
         return
     
+    # Query and re-rank documents
     retrieved_documents = query_index(index, retriever, question, data)
-    
     if retrieved_documents:
         re_ranked_docs = re_rank_documents(retrieved_documents, question)
         answer = run_rag_chain(re_ranked_docs, question, mistral_llm)
@@ -171,31 +174,13 @@ def main(file_path, model_name, question):
             print("No answer generated.")
     else:
         print("No documents retrieved.")
-    end_time = time.time()  # End the timer
+    
+    end_time = time.time()
     print(f"Execution Time: {end_time - start_time} seconds")
 
-if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Run chatbot with RAG.")
-    parser.add_argument("--data_path", type=str, required=False, help="Path to the log file.")
-    parser.add_argument("--model_name", type=str, default='mistral-7B-instruct-v0.3', help="Model name.")
-    parser.add_argument("--question", type=str, required=False, help="Question to ask the model.")
-    parser.add_argument("--info", action="store_true", help="Display information about the script and exit.")
-    args = parser.parse_args()
+# Example usage of the initialize_rag_system function
+#file_path = "path/to/log.json"   # Update with actual path
+#model_name = 'mistral-7B-instruct-v0.3'
+#question = "What's the battery level?"
 
-    if args.info:
-        print("""
-            This script is a chatbot system using Retrieval-Augmented Generation (RAG) to answer questions. 
-            It performs the following steps:
-            1. Loads a log file containing text data.
-            2. Initializes a language model and tokenizer from the specified model.
-            3. Uses FAISS for similarity search to find relevant information in the log data.
-            4. Generates a response based on both retrieved documents and the language model's answer generation.
-
-            Example usage:
-            python chatbot_rag.py --data_path path/to/log.json --model_path path/to/model --question "What's the battery level?"
-        """)
-    else:
-        if args.data_path and args.question:
-            main(args.data_path, args.model_name, args.question)
-        else:
-            print("Please provide both --data_path and --question arguments or use --info for more details.")
+#initialize_rag_system(file_path, model_name, question)
