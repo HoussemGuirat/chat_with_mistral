@@ -1,6 +1,67 @@
-this is a test folder for Enova robotic chat system with Mistral 7B-instruct model .
-It is recommended to create a virtual envirment for this project using python 3.12.4.
-for Windows users:
-`C:\Python312\python.exe -m venv chat`
-for MacOS/Linux users:
-`python3.12.4 -m venv chat`
+```markdown
+# Enova Robotic Chat System
+
+This repository contains a test folder for the **Enova Robotic Chat System** with the **Mistral 7B-instruct** model integrated. Additionally, a **Retrieval-Augmented Generation (RAG)** system has been added on top to enhance its capabilities.
+
+## Project Setup
+
+### Python Version
+It is recommended to use **Python 3.12.4** for this project to ensure compatibility with all dependencies.
+
+### Creating a Virtual Environment
+
+#### For Windows Users:
+To create a virtual environment on Windows, use the following command:
+
+```bash
+C:\Python312\python.exe -m venv chat
+```
+
+#### For macOS/Linux Users:
+To create a virtual environment on macOS or Linux, use the following command:
+
+```bash
+python3.12.4 -m venv chat
+```
+
+This will create a `chat` folder containing the virtual environment.
+
+### Activating the Virtual Environment
+
+After creating the virtual environment, you need to activate it:
+
+#### For Windows:
+```bash
+chat\Scripts\activate
+```
+
+#### For macOS/Linux:
+```bash
+source chat/bin/activate
+```
+
+### Installing Required Libraries
+
+Once the virtual environment is activated, install all the necessary libraries by running:
+
+```bash
+pip install -r requirements.txt
+```
+
+This will install all the dependencies listed in the `requirements.txt` file.
+
+## Project Structure
+
+- **test/**: This folder contains test scripts for the Enova robotic chat system.
+- **requirements.txt**: A file listing all the Python libraries required for this project.
+
+## Usage
+
+After setting up the environment and installing dependencies, you can start working with the **Mistral 7B-instruct** model and the integrated RAG system.
+
+---
+
+For any issues or feature requests, please refer to the project's GitHub Issues page.
+```
+
+This is all contained within a single block of text, which you can copy directly into a `README.md` file in your repository.
