@@ -60,8 +60,5 @@ This will install all the dependencies listed in the `requirements.txt` file.
 After setting up the environment and installing dependencies, you can start working with the **Mistral 7B-instruct** model and the integrated RAG system.
 
 ---
-
 For any issues or feature requests, please refer to the project's GitHub Issues page.
 ```
-
-This is all contained within a single block of text, which you can copy directly into a `README.md` file in your repository.
