@@ -1,4 +1,4 @@
-```markdown
+```
 # Enova Robotic Chat System
 
 This repository contains a test folder for the **Enova Robotic Chat System** with the **Mistral 7B-instruct** model integrated. Additionally, a **Retrieval-Augmented Generation (RAG)** system has been added on top to enhance its capabilities.
@@ -13,7 +13,7 @@ It is recommended to use **Python 3.12.4** for this project to ensure compatibil
 #### For Windows Users:
 To create a virtual environment on Windows, use the following command:
 
-```bash
+```
 C:\Python312\python.exe -m venv chat
 ```
 
@@ -44,7 +44,7 @@ source chat/bin/activate
 
 Once the virtual environment is activated, install all the necessary libraries by running:
 
-```bash
+```
 pip install -r requirements.txt
 ```
 
@@ -61,4 +61,3 @@ After setting up the environment and installing dependencies, you can start work
 
 ---
 For any issues or feature requests, please refer to the project's GitHub Issues page.
-```
