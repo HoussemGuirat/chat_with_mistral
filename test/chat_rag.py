@@ -1,17 +1,17 @@
-from langchain_community.llms.huggingface_pipeline import HuggingFacePipeline
-from langchain.prompts import PromptTemplate
-from langchain.chains import LLMChain
-from langchain.schema.runnable import RunnablePassthrough
-from sentence_transformers import SentenceTransformer, CrossEncoder
-from transformers import AutoTokenizer, AutoModelForCausalLM, BitsAndBytesConfig
-import transformers
 import re
 import time
 import torch
 import warnings
 import numpy as np
+from sentence_transformers import SentenceTransformer, CrossEncoder
 import faiss
+from transformers import AutoTokenizer, AutoModelForCausalLM, BitsAndBytesConfig
 from logparser import LogParser
+from langchain_community.llms.huggingface_pipeline import HuggingFacePipeline
+from langchain.prompts import PromptTemplate
+from langchain.chains import LLMChain
+from langchain.schema.runnable import RunnablePassthrough
+import transformers
 
 warnings.filterwarnings("ignore")
 
@@ -81,7 +81,7 @@ class ChatSystem:
 
     def initialize_faiss_index(self, data):
         try:
-            self.retriever = SentenceTransformer('all-MiniLM-L6-v2')
+            self.retriever = SentenceTransformer('chat_with_mistral/all-MiniLM-L6-v2')
             document_embeddings = self.retriever.encode(data, convert_to_tensor=True)
             dimension = document_embeddings.shape[1]
             self.index = faiss.IndexFlatIP(dimension)
@@ -98,8 +98,8 @@ class ChatSystem:
             print(f"Error querying index: {e}")
             return []
 
-    def re_rank_documents(self, retrieved_docs, query, re_rank_top_k=1):
-        re_ranker = CrossEncoder('ms-marco-MiniLM-L-6-v2')
+    def re_rank_documents(self, retrieved_docs, query, re_rank_top_k=3):
+        re_ranker = CrossEncoder('chat_with_mistral/ms-marco-MiniLM-L-6-v2')
         query_doc_pairs = [(query, doc) for doc in retrieved_docs]
         re_rank_scores = re_ranker.predict(query_doc_pairs)
         ranked_docs = [doc for _, doc in sorted(zip(re_rank_scores, retrieved_docs), reverse=True)]
