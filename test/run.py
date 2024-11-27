@@ -14,7 +14,6 @@ chat_system.mount(log_file_path)
 while True:
     recorder.keyboard_listener()
     transcription_text = transcriber.transcribe("question.wav")
-    print(transcription_text)
     answer = chat_system.run(transcription_text)
     print(answer)
     output_file = tts_generator.generate_speech(answer)

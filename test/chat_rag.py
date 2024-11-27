@@ -70,9 +70,9 @@ class ChatSystem:
                 model=self.model,
                 tokenizer=self.tokenizer,
                 task="text-generation",
-                temperature=0.3,
-                repetition_penalty=1.2,
-                return_full_text=True,
+                temperature=0.2,
+                repetition_penalty=1,
+                return_full_text=False,
                 max_new_tokens=1000,
             )
             self.mistral_llm = HuggingFacePipeline(pipeline=pipeline)
