@@ -61,12 +61,14 @@ After setting up the environment and installing dependencies, you can start work
 
 # NB
 
-For the models used in this repo, please make sure you download them from huggingface using your own API key before running this repo:
+For the models used in this repo, please make sure you download them from huggingface using your own API key before running this repo, run `huggingface-cli login`:
 - LLM: `mistralai/Mistral-7B-Instruct-v0.3`
 - RAG: `sentence-transformers/all-MiniLM-L6-v2`
 - Re-Ranking system (optional): `cross-encoder/ms-marco-MiniLM-L-6-v2`
 - Speech-to-Text: `openai/whisper-base`
 - Text-to-Speech: `microsoft/speecht5_tts`
+
+Make sure to change the paths for each model in the code as needed.
 
 For the Re-Ranking system it's just used for a better and more accurate retrival. If you are using a larger LLM models you can ignore adding the re-ranking system.
 
