@@ -5,6 +5,7 @@ transformers
 langchain
 accelerate
 sounddevice
+simpleaudio
 numpy
 threading2
 keyboard
