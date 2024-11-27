@@ -16,7 +16,7 @@ import transformers
 warnings.filterwarnings("ignore")
 
 class ChatSystem:
-    def __init__(self, model_name, device='cuda' if torch.cuda.is_available() else 'cpu'):
+    def __init__(self, model_name="./mistral-7B-instruct-v0.3", device='cuda' if torch.cuda.is_available() else 'cpu'):
         self.device = device
         if self.device == 'cpu':
             print("WARNING: CUDA is not available. Using CPU, which may result in slower computation.")
@@ -27,14 +27,14 @@ class ChatSystem:
         self.mistral_llm = None
         self.retriever = None
         self.index = None
+        self.data = None
 
     def load_data(self, file_path):
         try:
-            data = LogParser(file_path).get_all_data()
-            return data
+            self.data = LogParser(file_path).get_all_data()
         except Exception as e:
             print(f"Error loading data: {e}")
-            return None
+            self.data = None
 
     def initialize_model_and_tokenizer(self):
         try:
@@ -79,36 +79,37 @@ class ChatSystem:
         except Exception as e:
             print(f"Error initializing text generation pipeline: {e}")
 
-    def initialize_faiss_index(self, data):
+    def initialize_faiss_index(self):
         try:
-            self.retriever = SentenceTransformer('chat_with_mistral/all-MiniLM-L6-v2')
-            document_embeddings = self.retriever.encode(data, convert_to_tensor=True)
+            if self.data is None:
+                print("No data loaded for FAISS index.")
+                return
+            self.retriever = SentenceTransformer('./all-MiniLM-L6-v2')
+            document_embeddings = self.retriever.encode(self.data, convert_to_tensor=True)
             dimension = document_embeddings.shape[1]
             self.index = faiss.IndexFlatIP(dimension)
             self.index.add(np.array(document_embeddings.cpu()))
         except Exception as e:
             print(f"Error initializing FAISS index: {e}")
 
-    def query_index(self, query, data, top_k=7):
+    def query_index(self, query, top_k=5):
         try:
+            if self.index is None:
+                print("FAISS index is not initialized.")
+                return []
             query_embedding = self.retriever.encode(query, convert_to_tensor=True).cpu().numpy().reshape(1, -1)
             distances, indices = self.index.search(query_embedding, top_k)
-            return [data[i] for i in indices[0]]
+            return [self.data[i] for i in indices[0]]
         except Exception as e:
             print(f"Error querying index: {e}")
             return []
 
     def re_rank_documents(self, retrieved_docs, query, re_rank_top_k=3):
-        re_ranker = CrossEncoder('chat_with_mistral/ms-marco-MiniLM-L-6-v2')
+        re_ranker = CrossEncoder('./ms-marco-MiniLM-L-6-v2')
         query_doc_pairs = [(query, doc) for doc in retrieved_docs]
         re_rank_scores = re_ranker.predict(query_doc_pairs)
         ranked_docs = [doc for _, doc in sorted(zip(re_rank_scores, retrieved_docs), reverse=True)]
         return ranked_docs[:re_rank_top_k]
-
-    def extract_answer(self, response_text):
-        match = re.search(r"\[/INST\](.*)", response_text, re.DOTALL)
-        if match:
-            return match.group(1).strip()
 
     def run_rag_chain(self, retrieved_documents, question):
         try:
@@ -136,40 +137,44 @@ class ChatSystem:
             print(f"Error running RAG chain: {e}")
             return None
 
-    def run(self, file_path, question):
-        start_time = time.time()
-        
-        # Load data
-        data = self.load_data(file_path)
-        if data is None:
+    def mount(self, file_path):
+        self.load_data(file_path)
+        if self.data is None:
             return
         
-        # Initialize model and tokenizer
         model_config = self.initialize_model_and_tokenizer()
         if model_config is None:
             return
         
-        # Create configuration and load model
         bnb_config = self.create_bnb_config()
         self.load_model(bnb_config)
-        
-        # Initialize text generation pipeline
         self.initialize_text_generation_pipeline()
+        self.initialize_faiss_index()
+
+    def run(self, question):
+        if not self.data or not self.index:
+            print("System is not properly mounted. Please call `mount` first.")
+            return
         
-        # Initialize FAISS index
-        self.initialize_faiss_index(data)
-        
-        # Query and re-rank documents
-        retrieved_documents = self.query_index(question, data)
+        retrieved_documents = self.query_index(question)
         if retrieved_documents:
             re_ranked_docs = self.re_rank_documents(retrieved_documents, question)
-            answer = self.run_rag_chain(re_ranked_docs, question)
-            if answer:
-                print("Answer:", self.extract_answer(answer))
+            if self.run_rag_chain(re_ranked_docs, question):
+                return self.run_rag_chain(re_ranked_docs, question)
             else:
                 print("No answer generated.")
         else:
             print("No documents retrieved.")
-        
-        end_time = time.time()
-        print(f"Execution Time: {end_time - start_time} seconds")
+
+
+#Usage
+# Initialize the system
+#chat_system = ChatSystem()
+
+# Mount the system with the log file "log_p-guard1.json"
+#log_file_path = "./log_p-guard1.json"
+#chat_system.mount(log_file_path)
+
+# Ask a question
+#question = "What is the status of the latest error in the log?"
+#chat_system.run(question)
