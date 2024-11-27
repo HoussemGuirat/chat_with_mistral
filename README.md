@@ -69,6 +69,7 @@ For the models used in this repo, please make sure you download them from huggin
 - Text-to-Speech: `microsoft/speecht5_tts`
 
 Make sure to change the paths for each model in the code as needed.
+
 For the Re-Ranking system it's just used for a better and more accurate retrival. If you are using a larger LLM models you can ignore adding the re-ranking system.
 
 ---
