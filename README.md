@@ -71,7 +71,7 @@ For the models used in this repo, please make sure you download them from huggin
 # Table of compute using different GPUs
 | GPU      | VRAM | TERAFLOPS | Time to run in minuts   |
 |-----------|-----|-----|-----------|
-| RTX 3050 Mobile|4 GB| 	4.329 |6 |
+| RTX 3050 Mobile|4 GB| 	4.329 | 5 |
 | Tesla T4       |16 GB| 	8.141  | 2 |
 | A10 G   |12 GB|	31.52 | TBD |
 
