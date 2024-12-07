@@ -50,6 +50,8 @@ pip install -r requirements.txt
 
 This will install all the dependencies listed in the `requirements.txt` file.
 
+NB: for torch GPU support make sure you download the right packages version. Check `https://pytorch.org/get-started/locally/` for pytorch and for the CUDA driver you simply follow the steps in `https://developer.nvidia.com/cuda-downloads`. BE CAREFUL WITH CUDA VERSION AND PYTORCH SINCE THEY NEED TO MATCH VERSIONS OTHERWISE CUDA WON'T WORK.
+
 ## Project Structure
 
 - **test/**: This folder contains test scripts for the Enova robotic chat system.
