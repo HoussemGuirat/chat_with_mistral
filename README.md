@@ -1,7 +1,7 @@
 
-# Enova Robotic Chat System
+# Chat With Mistral
 
-This repository contains a test folder for the **Enova Robotic Chat System** with the **Mistral 7B-instruct** model integrated. Additionally, a **Retrieval-Augmented Generation (RAG)** system has been added on top to enhance its capabilities.
+This repository contains a test folder of our project utilizing **Mistral 7B-instruct** model. Additionally, a **Retrieval-Augmented Generation (RAG)** system has been added on top to enhance its capabilities.
 
 ## Project Setup
 
@@ -54,7 +54,7 @@ NB: for torch GPU support make sure you download the right packages version. Che
 
 ## Project Structure
 
-- **test/**: This folder contains test scripts for the Enova robotic chat system.
+- **test/**: This folder contains test scripts for the chat system.
 - **requirements.txt**: A file listing all the Python libraries required for this project.
 
 ## Usage
